@@ -6,17 +6,11 @@
         <th> name </th>
         <th> email </th>
       </tr>
+      <% u = $user.all()[$id-1] %>
       <tr>
-      <td>
-        <% u = user.all()[$id-1] %>
-      </td>
-  <tr>
-    <td><%= u.split(',').first %></td>
-    <td><%= u.split(',').last %></td>
-  </tr>
-      <td></td>
+        <td><%= u.split(',').first %></td>
+        <td><%= u.split(',').last %></td>
       </tr>
-
     </table>
   </body>
 </html>

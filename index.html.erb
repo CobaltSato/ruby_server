@@ -8,7 +8,7 @@
       </tr>
       <tr>
       <td>
-        <% users = user.all() %>
+        <% users = $user.all() %>
       </td>
 <% users.each do |u| %>
   <tr>
@@ -21,7 +21,7 @@
 
     </table>
   </body>
-  <form action="" method="get">
+  <form action="onclick.html" method="POST">
       <p>
         名前：<input type="text" name="name">
       </p>
@@ -29,9 +29,7 @@
         email：<input type="text" name="email">
       </p>
       <p>
-        <button type="submit" formaction="./onclick.html" name="button_b">
-          Submit
-        </button>
+        <input type="submit" value="送信する">
       </p>
   </form>
 </html>
