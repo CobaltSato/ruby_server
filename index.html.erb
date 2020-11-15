@@ -1,0 +1,37 @@
+<html>
+  <head> </head>
+  <body>
+    <table>
+      <tr>
+        <th> name </th>
+        <th> email </th>
+      </tr>
+      <tr>
+      <td>
+        <% users = user.all() %>
+      </td>
+<% users.each do |u| %>
+  <tr>
+    <td><%= u.split(',').first %></td>
+    <td><%= u.split(',').last %></td>
+  </tr>
+<% end %>
+      <td></td>
+      </tr>
+
+    </table>
+  </body>
+  <form action="" method="get">
+      <p>
+        名前：<input type="text" name="name">
+      </p>
+      <p>
+        email：<input type="text" name="email">
+      </p>
+      <p>
+        <button type="submit" formaction="./onclick.html" name="button_b">
+          Submit
+        </button>
+      </p>
+  </form>
+</html>
