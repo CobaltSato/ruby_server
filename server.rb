@@ -29,8 +29,13 @@ def routes(url)
   if url.eql?('/users') || url.eql?('/')
     return "index.html.erb"
   end
+  if url.include?('/users/')
+    $id = url['/users/'.length].to_i
+    return "show.html.erb"
+  end
 end
 
+$id = 0
 while true
   Thread.start(server.accept) do |socket|
     p socket.peeraddr
@@ -47,7 +52,7 @@ while true
       fname = routes(url.to_s)
       if !fname.nil?
         f = File.open(fname)
-        content =  ERB.new(f.read).result(binding)
+        content = ERB.new(f.read).result(binding)
         f.close
       end
       socket.write <<-EOF
