@@ -5,4 +5,6 @@ $ ruby migration.rb
 $ ruby server.rb
 ```
 
-ブラウザから"http://localhost:48002/"にアクセスする.
+ブラウザから
+"http://localhost:48002/"
+にアクセスする.
