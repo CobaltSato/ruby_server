@@ -44,9 +44,12 @@ while true
 
     if method.eql?("GET")
       user = User.new("users.csv")
-      f = File.open(routes(url.to_s))
-      content =  ERB.new(f.read).result(binding)
-      f.close
+      fname = routes(url.to_s)
+      if !fname.nil?
+        f = File.open(fname)
+        content =  ERB.new(f.read).result(binding)
+        f.close
+      end
       socket.write <<-EOF
 HTTP/1.1 200 OK
 Content-Type: text/html; charset=UTF-8
