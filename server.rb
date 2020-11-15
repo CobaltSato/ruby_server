@@ -1,11 +1,19 @@
 require "socket"
 require "erb"
 require "uri"
+require 'active_record'
+ADAPTER = 'sqlite3'
+DBFILE  = 'test.sqlite3'
 
 port = 48002
 server = TCPServer.open(port)
 
-class User
+ActiveRecord::Base.establish_connection(adapter: ADAPTER, database: DBFILE)
+class User < ActiveRecord::Base
+
+end
+
+class User_not_used_now
   def initialize(fname)
     @fname = fname
   end
@@ -37,7 +45,6 @@ def routes(url)
 end
 
 $id = 0
-$user = User.new("users.csv")
 $name = "noname"
 $email = "nobody@invalid.com"
 while true
@@ -82,7 +89,11 @@ Connection: close
         if $name != params[1] && $email != params[3]
           $name = params[1]
           $email = params[3]
-          $user.create(name: $name, email: URI.decode($email))
+          # $user.create(name: $name, email: URI.decode($email))
+user = User.new
+user.name  = $name
+user.email = URI.decode($email)
+user.save
           puts "Input name: $name, email: $email"
 
         f = File.open("onclick.html")

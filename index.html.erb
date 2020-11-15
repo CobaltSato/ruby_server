@@ -8,14 +8,14 @@
       </tr>
       <tr>
       <td>
-        <% users = $user.all() %>
+        <% users = User.all() %>
       </td>
-<% users.each do |u| %>
-  <tr>
-    <td><%= u.split(',').first %></td>
-    <td><%= u.split(',').last %></td>
-  </tr>
-<% end %>
+      <% users.each do |u| %>
+        <tr>
+        <td><%= u.name %></td>
+        <td><%= u.email %></td>
+      </tr>
+      <% end %>
       <td></td>
       </tr>
 
