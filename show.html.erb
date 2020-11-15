@@ -5,11 +5,13 @@
       <tr>
         <th> name </th>
         <th> email </th>
+        <th> hobby </th>
       </tr>
-      <% u = $user.all()[$id-1] %>
+      <% u = User.all()[$id-1] %>
       <tr>
-        <td><%= u.split(',').first %></td>
-        <td><%= u.split(',').last %></td>
+        <td><%= u.name %></td>
+        <td><%= URI.decode(u.email) %></td>
+        <td><%= u.hobby %></td>
       </tr>
     </table>
   </body>

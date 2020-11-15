@@ -7,5 +7,6 @@ ActiveRecord::Base.establish_connection(adapter: ADAPTER, database: DBFILE)
 ActiveRecord::Migration.create_table :users do |t|
   t.string  :name
   t.string  :email
+  t.string  :hobby
   t.timestamp :created_at, :null => false
 end

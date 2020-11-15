@@ -5,6 +5,8 @@
       <tr>
         <th> name </th>
         <th> email </th>
+        <th> hobby </th>
+
       </tr>
       <tr>
       <td>
@@ -13,7 +15,8 @@
       <% users.each do |u| %>
         <tr>
         <td><%= u.name %></td>
-        <td><%= u.email %></td>
+        <td><%= URI.decode(u.email) %></td>
+        <td><%= u.hobby %></td>
       </tr>
       <% end %>
       <td></td>
@@ -27,6 +30,9 @@
       </p>
       <p>
         email：<input type="text" name="email">
+      </p>
+      <p>
+        hobby：<input type="text" name="hobby">
       </p>
       <p>
         <input type="submit" value="送信する">

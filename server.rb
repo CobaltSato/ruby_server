@@ -13,27 +13,6 @@ class User < ActiveRecord::Base
 
 end
 
-class User_not_used_now
-  def initialize(fname)
-    @fname = fname
-  end
-
-  # 新規ユーザをcsvに書き込む
-  def create(fields)
-    f = File.open(@fname, "a")
-    f.write("#{fields[:name]}, #{fields[:email]}\n")
-    f.close
-  end
-
-  # すべてのユーザデータを"user,email"の配列で返す
-  def all()
-    f = File.open(@fname, "r")
-    users = f.read.split(/\R/)
-    f.close
-    return users
-  end
-end
-
 def routes(url)
   if url.eql?('/users') || url.eql?('/')
     return "index.html.erb"
@@ -47,6 +26,7 @@ end
 $id = 0
 $name = "noname"
 $email = "nobody@invalid.com"
+$hobby = "nothing"
 while true
   Thread.start(server.accept) do |socket|
     request = socket.gets
@@ -86,14 +66,16 @@ Connection: close
       if content_length != nil
         params = socket.read(content_length).to_s.split(/=|&/)
 
-        if $name != params[1] && $email != params[3]
+        if $name != params[1] && $email != params[3] && $hobby != params[5]
           $name = params[1]
           $email = params[3]
+          $hobby = params[5]
           # $user.create(name: $name, email: URI.decode($email))
-user = User.new
-user.name  = $name
-user.email = URI.decode($email)
-user.save
+          user = User.new
+          user.name  = $name
+          user.email = URI.decode($email)
+          user.hobby = $hobby
+          user.save
           puts "Input name: $name, email: $email"
 
         f = File.open("onclick.html")
@@ -116,4 +98,3 @@ Connection: close
 end
 
 server.close
-
