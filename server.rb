@@ -16,11 +16,11 @@ end
 
 class UsersController
   def index
-    fname = "index.html.erb"
+    fname = "./views/index.html.erb"
     return content(fname)
   end
   def show
-    fname = "show.html.erb"
+    fname = "./views/show.html.erb"
     return content(fname)
   end
   private
