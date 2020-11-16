@@ -43,7 +43,7 @@ def routes(method, url, socket)
     end
   end # if method.eql?("GET")
 
-  if method.eql?("POST") && url.eql?('/onclick.html')
+  if method.eql?("POST") && url.eql?('/users')
     # content_lengthを取り出す
     while req_header = socket.gets.chomp
       break if req_header == ''
@@ -70,7 +70,7 @@ def routes(method, url, socket)
         puts "Input name: $name, email: $email"
 
         # ありがとうございました.と表示する:
-        f = File.open("onclick.html")
+        f = File.open("./views/onclick.html")
         content = ERB.new(f.read).result(binding)
         f.close
         return content
