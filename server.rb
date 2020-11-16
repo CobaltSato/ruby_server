@@ -30,12 +30,12 @@ $hobby = "nothing"
 while true
   Thread.start(server.accept) do |socket|
     request = socket.gets
-    p request
-
     method = request.split(' ')[0]
     url = request.split(' ')[1]
+    puts method, url
 
     if method.eql?("GET")
+      # 対応するviewを表示する
       fname = routes(url.to_s)
       if !fname.nil?
         f = File.open(fname)
@@ -78,10 +78,11 @@ Connection: close
           user.save
           puts "Input name: $name, email: $email"
 
-        f = File.open("onclick.html")
-        content = ERB.new(f.read).result(binding)
-        f.close
-      socket.write <<-EOF
+          # ありがとうございました.と表示する:
+          f = File.open("onclick.html")
+          content = ERB.new(f.read).result(binding)
+          f.close
+          socket.write <<-EOF
 HTTP/1.1 200 OK
 Content-Type: text/html; charset=UTF-8
 Server: rserver
@@ -89,9 +90,9 @@ Connection: close
 
 #{content}
       EOF
-        end
-      end
-    end
+        end # if $name != params[1] && $email != params[3] && $hobby != params[5]
+      end # if content_length != nil
+    end # if method.eql?("POST")
 
     socket.close
   end
