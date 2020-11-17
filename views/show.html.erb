@@ -20,7 +20,7 @@
         <th> email </th>
         <th> hobby </th>
       </tr>
-      <% u = User.all()[$id-1] %>
+      <% u = User.all()[@id-1] %>
       <tr>
         <td><%= u.name %></td>
         <td><%= URI.decode(u.email) %></td>

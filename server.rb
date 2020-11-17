@@ -14,15 +14,18 @@ class User < ActiveRecord::Base
 
 end
 
-class UsersController
+class Render
   def index
     fname = "./views/index.html.erb"
     return content(fname)
   end
-  def show
+
+  def show(_id)
     fname = "./views/show.html.erb"
+    @id = _id
     return content(fname)
   end
+
   private
   def content(fname)
     f = File.open(fname)
@@ -35,11 +38,11 @@ end
 def routes(method, url, socket)
   if method.eql?("GET")
     if url.eql?('/users') || url.eql?('/')
-      return $usersController.index
+      return Render.new.index
     end
     if url.include?('/users/')
-      $id = url['/users/'.length].to_i
-      return $usersController.show
+      id = url['/users/'.length].to_i
+      return Render.new.show(id)
     end
   end # if method.eql?("GET")
 
@@ -57,33 +60,25 @@ def routes(method, url, socket)
     if content_length != nil
       params = socket.read(content_length).to_s.split(/=|&/)
 
-      if $name != params[1] && $email != params[3] && $hobby != params[5]
-        $name = params[1]
-        $email = params[3]
-        $hobby = params[5]
-        # $user.create(name: $name, email: URI.decode($email))
-        user = User.new
-        user.name  = $name
-        user.email = URI.decode($email)
-        user.hobby = $hobby
-        user.save
-        puts "Input name: $name, email: $email"
+      name = params[1]
+      email = params[3]
+      hobby = params[5]
+      # $user.create(name: $name, email: URI.decode($email))
+      user = User.new
+      user.name  = name
+      user.email = URI.decode(email)
+      user.hobby = hobby
+      user.save
+      puts "Input name: $name, email: $email"
 
-        # ありがとうございました.と表示する:
-        f = File.open("./views/onclick.html")
-        content = ERB.new(f.read).result(binding)
-        f.close
-        return content
-      end # if $name != params[1] && $email != params[3] && $hobby != params[5]
+      # ありがとうございました.と表示する:
+      f = File.open("./views/onclick.html")
+      content = ERB.new(f.read).result(binding)
+      f.close
+      return content
     end # if content_length != nil
   end # if method.eql?("POST")
 end
-
-$id = 0
-$name = "noname"
-$email = "nobody@invalid.com"
-$hobby = "nothing"
-$usersController = UsersController.new
 
 while true
   Thread.start(server.accept) do |socket|
