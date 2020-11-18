@@ -9,5 +9,6 @@ module Helper
     end
     return content_length
   end
+
   module_function :content_length
 end

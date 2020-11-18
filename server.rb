@@ -19,25 +19,25 @@ end
 def post(url, socket)
   if url.eql?('/users')
     content_length = Helper.content_length(socket)
-    if content_length != nil
-      # name, email, hobbyを取り出す
-      params = socket.read(content_length).to_s.split(/=|&/)
-      name = params[1]
-      email = params[3]
-      hobby = params[5]
+    return "" if content_length == nil
 
-      # user作成
-      user = User.new(name: name, email: URI.decode(email), hobby: hobby)
-      user.save
-      puts "saved: \n   name: #{name}, email: #{email}, hobby: #{hobby}"
+    # name, email, hobbyを取り出す
+    params = socket.read(content_length).to_s.split(/=|&/)
+    name = params[1]
+    email = params[3]
+    hobby = params[5]
 
-      # ありがとうございました と表示する:
-      ret = ""
-      File.open("./views/onclick.html") { |f|
-        ret = ERB.new(f.read).result(binding)
-      }
-      return ret
-    end
+    # user作成
+    user = User.new(name: name, email: URI.decode(email), hobby: hobby)
+    user.save
+    puts "saved: \n   name: #{name}, email: #{email}, hobby: #{hobby}"
+
+    # ありがとうございました と表示する:
+    ret = ""
+    File.open("./views/onclick.html") { |f|
+      ret = ERB.new(f.read).result(binding)
+    }
+    return ret
   end
 end
 
@@ -68,13 +68,13 @@ class Render
 
   private
   # 変換: erbファイル名 -> htmlファイルへ
-    def content(fname)
-      ret = ""
-      File.open(fname) { |f|
-        ret = ERB.new(f.read).result(binding)
-      }
-      return ret
-    end
+  def content(fname)
+    ret = ""
+    File.open(fname) { |f|
+      ret = ERB.new(f.read).result(binding)
+    }
+    return ret
+  end
 end
 
 def routes(method, url, socket)
