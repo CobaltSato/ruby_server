@@ -22,6 +22,7 @@ def post(url, socket)
     return "" if content_length == nil
 
     # name, email, hobbyを取り出す
+    # (正規表現で短くなる)
     params = socket.read(content_length).to_s.split(/=|&/)
     name = params[1]
     email = params[3]
@@ -43,6 +44,7 @@ end
 
 # urlへgetしたときの処理
 def get(url)
+  # (正規表現で短くなる)
   if url.eql?('/users') || url.eql?('/')
     return Render.new.index
   end
@@ -52,6 +54,7 @@ def get(url)
   end
 end
 
+# index, show.. ページのレンダリング
 class Render
   # indexページのレンダリング
   def index
@@ -77,6 +80,7 @@ class Render
   end
 end
 
+# method, urlに応じて処理を分岐させる
 def routes(method, url, socket)
   if method.eql?("GET")
     return get(url)
