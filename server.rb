@@ -2,6 +2,7 @@ require "socket"
 require "erb"
 require "uri"
 require 'active_record'
+require './helper'
 ADAPTER = 'sqlite3'
 DBFILE  = 'test.sqlite3'
 
@@ -15,9 +16,9 @@ class User < ActiveRecord::Base
 end
 
 # urlへpostしたときの処理
-def post(url)
+def post(url, socket)
   if url.eql?('/users')
-    content_length = content_length(socket)
+    content_length = Helper.content_length(socket)
     if content_length != nil
       # name, email, hobbyを取り出す
       params = socket.read(content_length).to_s.split(/=|&/)
@@ -31,10 +32,11 @@ def post(url)
       puts "saved: \n   name: #{name}, email: #{email}, hobby: #{hobby}"
 
       # ありがとうございました と表示する:
+      ret = ""
       File.open("./views/onclick.html") { |f|
-        content = ERB.new(f.read).result(binding)
+        ret = ERB.new(f.read).result(binding)
       }
-      return content
+      return ret
     end
   end
 end
@@ -75,24 +77,13 @@ class Render
     end
 end
 
-def content_length(socket)
-  while req_header = socket.gets.chomp
-    break if req_header == ''
-    h = req_header.split(':')
-    if h[0].strip.downcase == 'content-length'
-      content_length = h[1].strip.to_i
-    end
-  end
-  return content_length
-end
-
 def routes(method, url, socket)
   if method.eql?("GET")
     return get(url)
   end
 
   if method.eql?("POST")
-    return post(url)
+    return post(url, socket)
   end
 end
 
@@ -122,4 +113,3 @@ EOF
 end
 server.close
 # _main end
-
