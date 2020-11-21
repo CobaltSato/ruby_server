@@ -25,8 +25,8 @@ def post(url, session)
 
     # user作成
     user = User.new(name: params[0], email: URI.decode(params[1]), hobby: params[2])
-    user.save
-    puts "saved: \n   name: #{params[0]}, email: #{params[1]}, hobby: #{params[2]}"
+    puts "name: #{params[0]}, email: #{params[1]}, hobby: #{params[2]}"
+    return "" if !user.save
 
     # ありがとうございました と表示する:
     ret = ""
