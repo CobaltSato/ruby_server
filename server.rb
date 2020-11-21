@@ -21,16 +21,12 @@ def post(url, socket)
     # name, email, hobbyを取り出す
     content_length = Helper.content_length(socket)
     return "" if content_length == nil
-
     params = socket.read(content_length).scan(/name=(.*)&email=(.*)&hobby=(.*)/).flatten
-    name = params[0]
-    email = params[1]
-    hobby = params[2]
 
     # user作成
-    user = User.new(name: name, email: URI.decode(email), hobby: hobby)
+    user = User.new(name: params[0], email: URI.decode(params[1]), hobby: params[2])
     user.save
-    puts "saved: \n   name: #{name}, email: #{email}, hobby: #{hobby}"
+    puts "saved: \n   name: #{params[0]}, email: #{params[1]}, hobby: #{params[2]}"
 
     # ありがとうございました と表示する:
     ret = ""
