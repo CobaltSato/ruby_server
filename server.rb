@@ -22,11 +22,10 @@ def post(url, socket)
     content_length = Helper.content_length(socket)
     return "" if content_length == nil
 
-    # (正規表現で短くなる)
-    params = socket.read(content_length).to_s.split(/=|&/)
-    name = params[1]
-    email = params[3]
-    hobby = params[5]
+    params = socket.read(content_length).scan(/name=(.*)&email=(.*)&hobby=(.*)/).flatten
+    name = params[0]
+    email = params[1]
+    hobby = params[2]
 
     # user作成
     user = User.new(name: name, email: URI.decode(email), hobby: hobby)
