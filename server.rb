@@ -90,9 +90,8 @@ while true
   Thread.start(server.accept) do |session|
     # method, urlを取り出す
     request = session.gets
-    method = request.split(' ')[0]
-    url = request.split(' ')[1]
-    puts method, url
+    method, url = request.split(' ')
+    puts "method: #{method}, url: #{url}"
 
     # method, urlに応じて処理し, レンダリング結果を取得
     content = routes(method, url.to_s, session)
