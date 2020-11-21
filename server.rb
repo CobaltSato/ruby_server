@@ -15,13 +15,13 @@ class User < ActiveRecord::Base
 
 end
 
-# postしたとき, socket内容とurlに応じて処理を実行, レンダリング結果を返す
-def post(url, socket)
+# postしたとき, session内容とurlに応じて処理を実行, レンダリング結果を返す
+def post(url, session)
   if url.match(/\/users\/?$/)
     # name, email, hobbyを取り出す
-    content_length = Helper.content_length(socket)
+    content_length = Helper.content_length(session)
     return "" if content_length == nil
-    params = socket.read(content_length).scan(/name=(.*)&email=(.*)&hobby=(.*)/).flatten
+    params = session.read(content_length).scan(/name=(.*)&email=(.*)&hobby=(.*)/).flatten
 
     # user作成
     user = User.new(name: params[0], email: URI.decode(params[1]), hobby: params[2])
