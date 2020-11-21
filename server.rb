@@ -15,8 +15,7 @@ class User < ActiveRecord::Base
 
 end
 
-# urlへpostしたときの処理を実行し,
-# レンダリングして返す
+# postしたとき, socket内容とurlに応じて処理を実行, レンダリング結果を返す
 def post(url, socket)
   if url.eql?('/users')
     content_length = Helper.content_length(socket)
@@ -43,7 +42,7 @@ def post(url, socket)
   end
 end
 
-# urlへgetしたときのhtmlをレンダリングして返す
+# getしたとき, urlに応じてレンダリング結果を返す
 def get(url)
   # (正規表現で短くなる)
   if url.eql?('/users') || url.eql?('/')
@@ -55,7 +54,7 @@ def get(url)
   end
 end
 
-# index, show.. ページのレンダリング
+# {index, show.. }のページのレンダリングを担当
 class Render
   # indexページのレンダリング結果を返す
   def index
