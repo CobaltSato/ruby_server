@@ -101,10 +101,10 @@ while true
     url = request.split(' ')[1]
     puts method, url
 
-    # method, urlに応じて処理
+    # method, urlに応じて処理し, レンダリング結果を取得
     content = routes(method, url.to_s, socket)
 
-    # htmlを送る
+    # レンダリング結果をメッセージに含める
     socket.write <<-EOF
 HTTP/1.1 200 OK
 Content-Type: text/html; charset=UTF-8
