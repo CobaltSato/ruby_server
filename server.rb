@@ -18,10 +18,10 @@ end
 # postしたとき, socket内容とurlに応じて処理を実行, レンダリング結果を返す
 def post(url, socket)
   if url.eql?('/users')
+    # name, email, hobbyを取り出す
     content_length = Helper.content_length(socket)
     return "" if content_length == nil
 
-    # name, email, hobbyを取り出す
     # (正規表現で短くなる)
     params = socket.read(content_length).to_s.split(/=|&/)
     name = params[1]
@@ -44,18 +44,18 @@ end
 
 # getしたとき, urlに応じてレンダリング結果を返す
 def get(url)
-  # (正規表現で短くなる)
-  if url.eql?('/users') || url.eql?('/')
-    return Render.new.index
+  cl = UsersController.new
+  if url.match(/\/users\/?$/) || url.eql?('/') # '/users/', '/users', ('/')
+    return cl.index
   end
-  if url.include?('/users/')
-    id = url['/users/'.length].to_i
-    return Render.new.show(id)
+  if url.match(/\/users\/\d*\/?$/)
+    id = url.scan(/\/users\/(\d*)\/?$/).flatten.first
+    return cl.show(id)
   end
 end
 
 # {index, show.. }のページのレンダリングを担当
-class Render
+class UsersController
   # indexページのレンダリング結果を返す
   def index
     fname = "./views/index.html.erb"
