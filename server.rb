@@ -17,7 +17,7 @@ end
 
 # postしたとき, socket内容とurlに応じて処理を実行, レンダリング結果を返す
 def post(url, socket)
-  if url.eql?('/users')
+  if url.match(/\/users\/?$/)
     # name, email, hobbyを取り出す
     content_length = Helper.content_length(socket)
     return "" if content_length == nil
@@ -81,30 +81,29 @@ class UsersController
 end
 
 # methodに応じて, get/postを呼び出し, そのレンダリング結果を返す
-def routes(method, url, socket)
+def routes(method, url, session)
   if method.eql?("GET")
     return get(url)
   end
-
   if method.eql?("POST")
-    return post(url, socket)
+    return post(url, session)
   end
 end
 
 # main
 while true
-  Thread.start(server.accept) do |socket|
-    # method, urlを調べる
-    request = socket.gets
+  Thread.start(server.accept) do |session|
+    # method, urlを取り出す
+    request = session.gets
     method = request.split(' ')[0]
     url = request.split(' ')[1]
     puts method, url
 
     # method, urlに応じて処理し, レンダリング結果を取得
-    content = routes(method, url.to_s, socket)
+    content = routes(method, url.to_s, session)
 
     # レンダリング結果をメッセージに含める
-    socket.write <<-EOF
+    session.write <<-EOF
 HTTP/1.1 200 OK
 Content-Type: text/html; charset=UTF-8
 Server: rserver
@@ -112,7 +111,7 @@ Connection: close
 
 #{content}
 EOF
-    socket.close
+    session.close
   end
 end
 server.close
