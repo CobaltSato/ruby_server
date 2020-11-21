@@ -49,7 +49,7 @@ def get(url)
     return cl.index
   end
   if url.match(/\/users\/\d*\/?$/)
-    id = url.scan(/\/users\/(\d*)\/?$/).flatten.first
+    id = url.scan(/\/users\/(\d*)\/?$/).flatten.first.to_i
     return cl.show(id)
   end
 end
