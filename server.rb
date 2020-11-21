@@ -15,7 +15,8 @@ class User < ActiveRecord::Base
 
 end
 
-# urlへpostしたときの処理
+# urlへpostしたときの処理を実行し,
+# レンダリングして返す
 def post(url, socket)
   if url.eql?('/users')
     content_length = Helper.content_length(socket)
@@ -42,7 +43,7 @@ def post(url, socket)
   end
 end
 
-# urlへgetしたときの処理
+# urlへgetしたときのhtmlをレンダリングして返す
 def get(url)
   # (正規表現で短くなる)
   if url.eql?('/users') || url.eql?('/')
@@ -56,13 +57,13 @@ end
 
 # index, show.. ページのレンダリング
 class Render
-  # indexページのレンダリング
+  # indexページのレンダリング結果を返す
   def index
     fname = "./views/index.html.erb"
     return content(fname)
   end
 
-  # showページのレンダリング
+  # showページのレンダリング結果を返す
   def show(_id)
     fname = "./views/show.html.erb"
     @id = _id
@@ -80,7 +81,7 @@ class Render
   end
 end
 
-# method, urlに応じて処理を分岐させる
+# methodに応じて, get/postを呼び出し, そのレンダリング結果を返す
 def routes(method, url, socket)
   if method.eql?("GET")
     return get(url)
@@ -103,7 +104,7 @@ while true
     # method, urlに応じて処理
     content = routes(method, url.to_s, socket)
 
-    # html形式で返す
+    # htmlを送る
     socket.write <<-EOF
 HTTP/1.1 200 OK
 Content-Type: text/html; charset=UTF-8
@@ -116,4 +117,3 @@ EOF
   end
 end
 server.close
-# _main end
