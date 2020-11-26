@@ -6,105 +6,94 @@ require './helper'
 ADAPTER = 'sqlite3'
 DBFILE  = 'test.sqlite3'
 
-port = 48002
-server = TCPServer.open(port)
-
 ActiveRecord::Base.establish_connection(adapter: ADAPTER, database: DBFILE)
 
 class User < ActiveRecord::Base
-
 end
 
-# postしたとき, session内容とurlに応じて処理を実行, レンダリング結果を返す
-def post(url, session)
-  if url.match(/\/users\/?$/)
-    # name, email, hobbyを取り出す
-    content_length = Helper.content_length(session)
-    return "" if content_length == nil
-    params = session.read(content_length).scan(/name=(.*)&email=(.*)&hobby=(.*)/).flatten
-
-    # user作成
-    user = User.new(name: params[0], email: URI.decode(params[1]), hobby: params[2])
-    puts "name: #{params[0]}, email: #{params[1]}, hobby: #{params[2]}"
-    return "" if !user.save
-
-    # ありがとうございました と表示する:
-    ret = ""
-    File.open("./views/onclick.html") { |f|
-      ret = ERB.new(f.read).result(binding)
-    }
-    return ret
-  end
-end
-
-# getしたとき, urlに応じてレンダリング結果を返す
-def get(url)
-  cl = UsersController.new
-  if url.match(/\/users\/?$/) || url.eql?('/') # '/users/', '/users', ('/')
-    return cl.index
-  end
-  if url.match(/\/users\/\d*\/?$/)
-    id = url.scan(/\/users\/(\d*)\/?$/).flatten.first.to_i
-    return cl.show(id)
-  end
-end
-
-# {index, show.. }のページのレンダリングを担当
 class UsersController
-  # indexページのレンダリング結果を返す
+  attr_reader :rendered
   def index
-    fname = "./views/index.html.erb"
-    return content(fname)
+    render "./views/index.html.erb"
   end
 
-  # showページのレンダリング結果を返す
   def show(_id)
-    fname = "./views/show.html.erb"
     @id = _id
-    return content(fname)
+    render "./views/show.html.erb"
+  end
+
+  def create(params)
+    if User.create(name: params[0], email: URI.decode(params[1]), hobby: params[2])
+      render "./views/onclick.html"
+    else
+      render "./views/index.html.erb"
+    end
   end
 
   private
-  # 変換: erbファイル名 -> htmlファイルへ
-  def content(fname)
-    ret = ""
+  def render(fname)
+    @render = nil if !fname
     File.open(fname) { |f|
-      ret = ERB.new(f.read).result(binding)
+      @rendered = ERB.new(f.read).result(binding)
     }
-    return ret
+  end
+
+end
+
+class Service
+  def initialize()
+    @usersController = UsersController.new
+  end
+
+  def readRequest(session)
+    request = session.gets
+    @method, @url = request.split(' ')
+  end
+
+  def rendered
+    @usersController.rendered
+  end
+
+  def routes(session)
+    if @url.eql?('/') && @method.eql?("GET")
+      @usersController.index
+    end
+
+    if @url.match(/\/users\/?$/) && @method.eql?("GET")
+      @usersController.index
+    end
+
+    if @url.match(/\/users\/\d*\/?$/) && @method.eql?("GET")
+      id = @url.scan(/\/users\/(\d*)\/?$/).flatten.first.to_i
+      @usersController.show(id)
+    end
+
+    if @url.match(/\/users\/?$/) && @method.eql?("POST")
+      params = Helper.getParams(/name=(.*)&email=(.*)&hobby=(.*)/, session)
+      @usersController.create(params)
+    end
   end
 end
 
-# methodに応じて, get/postを呼び出し, そのレンダリング結果を返す
-def routes(method, url, session)
-  if method.eql?("GET")
-    return get(url)
-  end
-  if method.eql?("POST")
-    return post(url, session)
-  end
-end
-
-# main
+port = 48002
+server = TCPServer.open(port)
 while true
   Thread.start(server.accept) do |session|
-    # method, urlを取り出す
-    request = session.gets
-    method, url = request.split(' ')
-    puts "method: #{method}, url: #{url}"
+    service = Service.new
 
-    # method, urlに応じて処理し, レンダリング結果を取得
-    content = routes(method, url.to_s, session)
+    service.readRequest(session)
 
-    # レンダリング結果をメッセージに含める
+    service.routes(session)
+
     session.write <<-EOF
 HTTP/1.1 200 OK
 Content-Type: text/html; charset=UTF-8
 Server: rserver
 Connection: close
 
-#{content}
-EOF
+#{service.rendered}
+  EOF
+
     session.close
   end
 end

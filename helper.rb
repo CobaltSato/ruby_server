@@ -10,5 +10,11 @@ module Helper
     return content_length
   end
 
-  module_function :content_length
+  def getParams(regex, session)
+    content_length = Helper.content_length(session)
+    return nil if content_length == nil
+    session.read(content_length).scan(regex).flatten
+  end
+
+  module_function :content_length, :getParams
 end
