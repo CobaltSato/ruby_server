@@ -32,7 +32,7 @@ class UsersController
 
   private
   def render(fname)
-    @render = nil if !fname
+    @rendered = nil if !fname
     File.open(fname) { |f|
       @rendered = ERB.new(f.read).result(binding)
     }
