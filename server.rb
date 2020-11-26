@@ -41,20 +41,17 @@ class UsersController
 end
 
 class Service
-  def initialize()
+  def initialize(session)
     @usersController = UsersController.new
-  end
-
-  def readRequest(session)
-    request = session.gets
-    @method, @url = request.split(' ')
+    @session = session
+    @method, @url = session.gets.split(' ')
   end
 
   def rendered
     @usersController.rendered
   end
 
-  def routes(session)
+  def routes()
     if @url.eql?('/') && @method.eql?("GET")
       @usersController.index
     end
@@ -69,7 +66,7 @@ class Service
     end
 
     if @url.match(/\/users\/?$/) && @method.eql?("POST")
-      params = Helper.getParams(/name=(.*)&email=(.*)&hobby=(.*)/, session)
+      params = Helper.getParams(/name=(.*)&email=(.*)&hobby=(.*)/, @session)
       @usersController.create(params)
     end
   end
@@ -80,11 +77,9 @@ port = 48002
 server = TCPServer.open(port)
 while true
   Thread.start(server.accept) do |session|
-    service = Service.new
+    service = Service.new(session)
 
-    service.readRequest(session)
-
-    service.routes(session)
+    service.routes()
 
     session.write <<-EOF
 HTTP/1.1 200 OK
