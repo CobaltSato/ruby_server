@@ -60,7 +60,7 @@ class Service
       @usersController.index
     end
 
-    if @url.match(/\/users\/\d*\/?$/) && @method.eql?("GET")
+    if @url.match(/\/users\/\d+\/?$/) && @method.eql?("GET")
       id = @url.scan(/\/users\/(\d*)\/?$/).flatten.first.to_i
       @usersController.show(id)
     end
