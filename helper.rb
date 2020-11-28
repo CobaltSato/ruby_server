@@ -10,10 +10,16 @@ module Helper
     return content_length
   end
 
-  def getParams(regex, session)
-    content_length = Helper.content_length(session)
-    return nil if content_length == nil
-    session.read(content_length).scan(regex).flatten
+  def getParams(keys, session)
+    return nil if keys.length == 0
+    pattern = ""
+    keys.each do |pName|
+      pattern << "#{pName}=(.*)&"
+    end 
+    regex = Regexp.new(pattern.chop)
+    line = Helper.content_length(session)
+    values = session.read(line).scan(regex).flatten
+    keys.zip(values).to_h
   end
 
   module_function :content_length, :getParams

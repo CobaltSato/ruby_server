@@ -23,7 +23,7 @@ class UsersController
   end
 
   def create(params)
-    if User.create(name: params[0], email: URI.decode(params[1]), hobby: params[2])
+    if User.create(params)
       render "./views/onclick.html"
     else
       render "./views/index.html.erb"
@@ -66,7 +66,7 @@ class Service
     end
 
     if @url.match(/\/users\/?$/) && @method.eql?("POST")
-      params = Helper.getParams(/name=(.*)&email=(.*)&hobby=(.*)/, @session)
+      params = Helper.getParams(["name", "email", "hobby"], @session)
       @usersController.create(params)
     end
   end
