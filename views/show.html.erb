@@ -20,11 +20,10 @@
         <th> email </th>
         <th> hobby </th>
       </tr>
-      <% u = User.all()[@id-1] %>
       <tr>
-        <td><%= u.name %></td>
-        <td><%= URI.decode(u.email) %></td>
-        <td><%= u.hobby %></td>
+        <td><%= @user.name %></td>
+        <td><%= URI.decode(@user.email) %></td>
+        <td><%= @user.hobby %></td>
       </tr>
     </table>
     </div>

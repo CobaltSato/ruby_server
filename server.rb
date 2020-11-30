@@ -17,8 +17,8 @@ class UsersController
     render "./views/index.html.erb"
   end
 
-  def show(_id)
-    @id = _id
+  def show(id)
+    @user = User.find_by(id)
     render "./views/show.html.erb"
   end
 
