@@ -14,6 +14,7 @@ end
 class UsersController
   attr_reader :rendered
   def index
+    @users = User.all()
     render "./views/index.html.erb"
   end
 
